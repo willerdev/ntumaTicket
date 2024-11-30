@@ -7,11 +7,7 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 space-y-6 page-transition">
       <div className="text-center space-y-4">
-        <img 
-          src="/logo.png" 
-          alt="NtumaTicket Logo"
-          className="w-32 h-32 mx-auto" 
-        />
+        
         <h1 className="text-4xl font-bold">Welcome to NtumaTicket</h1>
         <p className="text-muted-foreground">Your premium ticket booking experience</p>
       </div>
