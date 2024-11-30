@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueries } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,20 @@ const Home = () => {
       if (error) throw error;
       return data;
     },
+  });
+
+  // Prefetch images
+  useQueries({
+    queries: events?.map((event) => ({
+      queryKey: ['image', event.image_url],
+      queryFn: async () => {
+        const response = await fetch(event.image_url || "/placeholder.svg");
+        const blob = await response.blob();
+        return URL.createObjectURL(blob);
+      },
+      staleTime: 1000 * 60 * 60, // Cache for 1 hour
+      cacheTime: 1000 * 60 * 60 * 24, // Keep in cache for 24 hours
+    })) || [],
   });
 
   if (isLoading) {
@@ -49,6 +63,7 @@ const Home = () => {
               src={event.image_url || "/placeholder.svg"} 
               alt={event.title}
               className="w-full h-48 object-cover"
+              loading="lazy"
             />
             <div className="p-4 space-y-4">
               <div>
@@ -57,21 +72,8 @@ const Home = () => {
               </div>
               
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Calendar size={16} />
-                  {new Date(event.date).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <MapPin size={16} />
-                  {event.location}
-                </div>
+           
+              
               </div>
               
               <div className="flex items-center justify-between">
